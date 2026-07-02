@@ -3,6 +3,7 @@ services:
     build:
       context: ./docker/php
     container_name: crm-system-app
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
     working_dir: /var/www/html
     volumes:
       - ./src:/var/www/html
