@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Domain\Audit\Enums\AuditAction;
 use App\Domain\Ticket\Enums\TicketPriority;
 use App\Domain\Ticket\Enums\TicketStatus;
 use App\Models\Client;
@@ -128,6 +129,17 @@ final class CreateTicketApiTest extends TestCase
             'client_id' => $client->id,
             'created_by' => $user->id,
             'status' => TicketStatus::New->value,
+        ]);
+        $this->assertDatabaseHas('ticket_status_histories', [
+            'old_status' => null,
+            'new_status' => TicketStatus::New->value,
+            'changed_by' => $user->id,
+            'reason' => 'Ticket created',
+        ]);
+        $this->assertDatabaseHas('audit_logs', [
+            'actor_id' => $user->id,
+            'entity_type' => 'ticket',
+            'action' => AuditAction::TicketCreated->value,
         ]);
     }
 }

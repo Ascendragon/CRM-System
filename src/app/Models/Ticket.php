@@ -8,6 +8,7 @@ use Database\Factories\TicketFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ticket extends Model
 {
@@ -69,5 +70,16 @@ class Ticket extends Model
         }
 
         return TicketPriority::from((string) $priority);
+    }
+
+    public function statusHistories(): HasMany
+    {
+        return $this->hasMany(TicketStatusHistory::class);
+    }
+
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(AuditLog::class, 'entity_id')
+            ->where('entity_type', 'ticket');
     }
 }
