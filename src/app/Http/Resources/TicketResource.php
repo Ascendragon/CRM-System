@@ -28,6 +28,28 @@ class TicketResource extends JsonResource
             'client_id' => $ticket->getAttribute('client_id'),
             'created_by' => $ticket->getAttribute('created_by'),
             'assigned_to' => $ticket->getAttribute('assigned_to'),
+            'client' => $this->whenLoaded('client', function () use ($ticket): array {
+                return [
+                    'id' => $ticket->client?->getKey(),
+                    'name' => $ticket->client?->getAttribute('name'),
+                ];
+            }),
+            'creator' => $this->whenLoaded('creator', function () use ($ticket): array {
+                return [
+                    'id' => $ticket->creator?->getKey(),
+                    'name' => $ticket->creator->getAttribute('name'),
+                ];
+            }),
+            'assignee' => $this->whenLoaded('assignee', function () use ($ticket): ?array {
+                if ($ticket->assignee === null) {
+                    return null;
+                }
+
+                return [
+                    'id' => $ticket->assignee->getKey(),
+                    'name' => $ticket->assignee->getAttribute('name'),
+                ];
+            }),
             'title' => $ticket->getAttribute('title'),
             'description' => $ticket->getAttribute('description'),
             'status' => $ticket->getStatus()->value,
